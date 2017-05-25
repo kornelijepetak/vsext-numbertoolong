@@ -59,34 +59,19 @@ namespace NumberTooLong
 			LiteralExpressionSyntax literal,
 			CancellationToken cancellationToken)
 		{
-			string text = literal.Token.Text;
-			string newText = insertDecimalSeparators(text);
+			string text = literal.Token.Text.Replace("_", "");
+			string newText = text.WithDecimalSeparators();
 
-			var newSyntax = SyntaxFactory.ParseExpression(newText)
+			ExpressionSyntax newSyntax = 
+				SyntaxFactory.ParseExpression(newText)
 				.WithLeadingTrivia(literal.GetLeadingTrivia())
 				.WithTrailingTrivia(literal.GetTrailingTrivia())
 				.WithAdditionalAnnotations(Formatter.Annotation);
 
-			var root = await document.GetSyntaxRootAsync();
-			var newRoot = root.ReplaceNode(literal, newSyntax);
+			SyntaxNode rootNode = await document.GetSyntaxRootAsync();
+			SyntaxNode newRoot = rootNode.ReplaceNode(literal, newSyntax);
 
-			var newDocument = document.WithSyntaxRoot(newRoot);
-			return newDocument;
-		}
-
-		private string insertDecimalSeparators(string number)
-		{
-			int insertBeforeModIndex = number.Length % 3;
-			StringBuilder newNumberText = new StringBuilder();
-			for (int i = 0; i < number.Length; i++)
-			{
-				if (i > 0 && i % 3 == insertBeforeModIndex)
-					newNumberText.Append("_");
-
-				newNumberText.Append(number[i]);
-			}
-
-			return newNumberText.ToString();
+			return document.WithSyntaxRoot(newRoot);
 		}
 	}
 }

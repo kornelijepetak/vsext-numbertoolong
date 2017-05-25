@@ -43,9 +43,6 @@ namespace NumberTooLong
 
 			string numberText = numberSyntax.Token.Text;
 
-			if (!long.TryParse(numberText, out long number))
-				return;
-
 			Type constantType = context.SemanticModel
 				.GetConstantValue(numberSyntax)
 				.Value
@@ -54,13 +51,17 @@ namespace NumberTooLong
 			if (constantType != typeof(int) && constantType != typeof(long))
 				return;
 
-			if (numberText.Length <= 6)
+			string rawNumberText = numberText.Replace("_", "");
+
+			if (rawNumberText.Length < 6)
 				return;
 
-			var diagnostic =
-				Diagnostic.Create(Rule, numberSyntax.GetLocation(), message);
+			int underscoreCount = numberText.GetUnderscoreCount();
+			if (underscoreCount >= (rawNumberText.Length - 1) / 3)
+				return;
 
-			context.ReportDiagnostic(diagnostic);
+			context.ReportDiagnostic(
+				Diagnostic.Create(Rule, numberSyntax.GetLocation(), message));
 		}
 	}
 }
