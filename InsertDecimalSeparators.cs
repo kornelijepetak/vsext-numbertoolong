@@ -20,7 +20,7 @@ namespace NumberTooLong
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InsertDecimalSeparators)), Shared]
 	public class InsertDecimalSeparators : CodeFixProvider
 	{
-		private const string diagnosticId = "NumberTooLongAnalyzer";
+		private const string diagnosticId = NumberTooLongAnalyzer.DiagnosticId;
 		private const string title = "Insert decimal separators";
 
 		public sealed override ImmutableArray<string> FixableDiagnosticIds

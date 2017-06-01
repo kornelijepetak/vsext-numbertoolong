@@ -31,7 +31,9 @@ namespace NumberTooLong
 
 		public override void Initialize(AnalysisContext context)
 		{
-			context.RegisterSyntaxNodeAction(handle, SyntaxKind.NumericLiteralExpression);
+			context.RegisterSyntaxNodeAction(
+                handle, 
+                SyntaxKind.NumericLiteralExpression);
 		}
 
 		private void handle(SyntaxNodeAnalysisContext context)
